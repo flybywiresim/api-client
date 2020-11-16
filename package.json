@@ -1,0 +1,35 @@
+{
+  "name": "@fbw/api-client",
+  "version": "0.1.0",
+  "description": "Client library for the FlyByWire Simulations API",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flybywiresim/api-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flybywiresim/api-client/issues"
+  },
+  "homepage": "https://github.com/flybywiresim/api-client#readme",
+  "keywords": [
+    "fs2020",
+    "fbw"
+  ],
+  "files": [
+    "lib/**/*"
+  ],
+  "author": "FlyByWire Simulations",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "prettier": "^2.1.2",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.0.5"
+  }
+}
