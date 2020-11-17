@@ -25,7 +25,7 @@
     "lib/**/*"
   ],
   "author": "FlyByWire Simulations",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "devDependencies": {
     "prettier": "^2.1.2",
     "tslint": "^6.1.3",
