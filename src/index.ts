@@ -89,8 +89,8 @@ export class TelexNotConnectedError extends Error {
 }
 
 
-class NXApi {
-    public static url = "https://api.flybywiresim.com";
+export class NXApi {
+    public static url = new URL("https://api.flybywiresim.com");
 }
 
 export class Metar {
@@ -99,12 +99,12 @@ export class Metar {
             throw new Error("No ICAO provided");
         }
 
-        let url = `${NXApi.url}/metar/${icao}`;
+        let url = new URL(`/metar/${icao}`, NXApi.url);
         if (source) {
-            url += `?source=${source}`;
+            url.searchParams.set("source", source);
         }
 
-        return fetch(url)
+        return fetch(url.href)
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -121,12 +121,12 @@ export class Atis {
             throw new Error("No ICAO provided");
         }
 
-        let url = `${NXApi.url}/atis/${icao}`;
+        let url = new URL(`/atis/${icao}`, NXApi.url);
         if (source) {
-            url += `?source=${source}`;
+            url.searchParams.set("source", source);
         }
 
-        return fetch(url)
+        return fetch(url.href)
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -143,12 +143,12 @@ export class Taf {
             throw new Error("No ICAO provided");
         }
 
-        let url = `${NXApi.url}/taf/${icao}`;
+        let url = new URL(`/taf/${icao}`, NXApi.url);
         if (source) {
-            url += `?source=${source}`;
+            url.searchParams.set("source", source);
         }
 
-        return fetch(url)
+        return fetch(url.href)
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -170,7 +170,9 @@ export class Telex {
             "Content-Type": "application/json"
         };
 
-        return fetch(`${NXApi.url}/txcxn`, {method: "POST", body: JSON.stringify(connectBody), headers})
+        let url = new URL(`/txcxn`, NXApi.url);
+
+        return fetch(url.href, {method: "POST", body: JSON.stringify(connectBody), headers})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -193,7 +195,9 @@ export class Telex {
             Authorization: Telex.buildToken()
         };
 
-        return fetch(`${NXApi.url}/txcxn`, {method: "PUT", body: JSON.stringify(connectBody), headers})
+        let url = new URL(`/txcxn`, NXApi.url);
+
+        return fetch(url.href, {method: "PUT", body: JSON.stringify(connectBody), headers})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -210,7 +214,9 @@ export class Telex {
             Authorization: Telex.buildToken()
         };
 
-        return fetch(`${NXApi.url}/txcxn`, {method: "DELETE", headers})
+        let url = new URL(`/txcxn`, NXApi.url);
+
+        return fetch(url.href, {method: "DELETE", headers})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -232,7 +238,9 @@ export class Telex {
             Authorization: Telex.buildToken()
         };
 
-        return fetch(`${NXApi.url}/txmsg`, {method: "POST", body: JSON.stringify(body), headers})
+        let url = new URL(`/txmsg`, NXApi.url);
+
+        return fetch(url.href, {method: "POST", body: JSON.stringify(body), headers})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -249,7 +257,9 @@ export class Telex {
             Authorization: Telex.buildToken()
         };
 
-        return fetch(`${NXApi.url}/txmsg`, {method: "GET", headers})
+        let url = new URL(`/txmsg`, NXApi.url);
+
+        return fetch(url.href, {method: "GET", headers})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -260,15 +270,15 @@ export class Telex {
     }
 
     public static fetchConnections(skip?: number, take?: number): Promise<Paginated<TelexConnection>> {
-        let url = `${NXApi.url}/txcxn?`;
+        let url = new URL(`/txcxn`, NXApi.url);
         if (skip) {
-            url += `skip=${skip}&`;
+            url.searchParams.set("skip", skip.toString());
         }
         if (take) {
-            url += `take=${take}`;
+            url.searchParams.append("take", take.toString());
         }
 
-        return fetch(url, {method: "GET"})
+        return fetch(url.href, {method: "GET"})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -279,7 +289,9 @@ export class Telex {
     }
 
     public static fetchConnection(id: string): Promise<TelexConnection> {
-        return fetch(`${NXApi.url}/txcxn/${id}`, {method: "GET"})
+        let url = new URL(`/txcxn/${id}`, NXApi.url);
+
+        return fetch(url.href, {method: "GET"})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
@@ -290,7 +302,10 @@ export class Telex {
     }
 
     public static findConnection(flightNumber: string): Promise<TelexConnection> {
-        return fetch(`${NXApi.url}/txcxn/_find?flight=${flightNumber}`, {method: "GET"})
+        let url = new URL(`/txcxn/_find`, NXApi.url);
+        url.searchParams.set("flight", flightNumber);
+
+        return fetch(url.href, {method: "GET"})
             .then((response) => {
                 if (!response.ok) {
                     throw new HttpError(response.status);
