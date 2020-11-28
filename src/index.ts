@@ -19,6 +19,17 @@ export declare class AtisResponse {
     dep?: string;
 }
 
+export declare class AirportResponse {
+    icao: string;
+    type: string;
+    name: string;
+    lat: number;
+    lon: number;
+    elevation: number;
+    continent: string;
+    country: string;
+}
+
 export declare class TelexConnection {
     id: string;
     isActive: boolean;
@@ -352,5 +363,24 @@ export class Telex {
         if (!Telex.accessToken) {
             throw new TelexNotConnectedError();
         }
+    }
+}
+
+export class Airport {
+    public static get(icao: string): Promise<AirportResponse> {
+        if (!icao) {
+            throw new Error("No ICAO provided");
+        }
+
+        let url = new URL(`/api/v1/airport/${icao}`, NXApi.url);
+
+        return fetch(url.href)
+          .then((response) => {
+              if (!response.ok) {
+                  throw new HttpError(response.status);
+              }
+
+              return response.json();
+          });
     }
 }
