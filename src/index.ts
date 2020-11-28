@@ -207,7 +207,7 @@ export class Telex {
             });
     }
 
-    public static disconnect(status: AircraftStatus): Promise<void> {
+    public static disconnect(): Promise<void> {
         Telex.connectionOrThrow();
 
         const headers = {
