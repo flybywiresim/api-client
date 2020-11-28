@@ -315,6 +315,19 @@ export class Telex {
             });
     }
 
+    public static countConnections(): Promise<number> {
+        let url = new URL(`/txcxn/_count`, NXApi.url);
+
+        return fetch(url.href, {method: "GET"})
+          .then((response) => {
+              if (!response.ok) {
+                  throw new HttpError(response.status);
+              }
+
+              return response.json();
+          });
+    }
+
     private static buildBody(status: AircraftStatus) {
         return {
             location: {
