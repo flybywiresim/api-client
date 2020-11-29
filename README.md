@@ -61,7 +61,7 @@ Taf.get(icao, source)
 
 ### ATIS
 ```ts
-import { Taf } from '@flybywiresim/api-client';
+import { Atis } from '@flybywiresim/api-client';
 
 Atis.get(icao, source)
   .then(data => {
@@ -148,7 +148,7 @@ This releases the flight number for reuse and removes the flight from the live m
 
 #### Sending a message
 ```ts
-import { Airport } from '@flybywiresim/api-client';
+import { Telex } from '@flybywiresim/api-client';
 
 Telex.sendMessage(recipient, message)
   .then(data => {
@@ -165,7 +165,7 @@ Messages will be filtered for profanity in the backend.
 
 #### Receiving messages
 ```ts
-import { Airport } from '@flybywiresim/api-client';
+import { Telex } from '@flybywiresim/api-client';
 
 Telex.fetchMessages()
   .then(data => {
@@ -181,7 +181,7 @@ Messages can only be received once and will be acknowledged by this transaction.
 
 #### Fetch all active connections
 ```ts
-import { Airport } from '@flybywiresim/api-client';
+import { Telex } from '@flybywiresim/api-client';
 
 Telex.fetchConnections(skip, take)
   .then(data => {
@@ -198,7 +198,7 @@ Telex.fetchConnections(skip, take)
 
 #### Fetch a certain connection
 ```ts
-import { Airport } from '@flybywiresim/api-client';
+import { Telex } from '@flybywiresim/api-client';
 
 Telex.fetchConnection(id)
   .then(data => {
@@ -212,7 +212,7 @@ Telex.fetchConnection(id)
 
 #### Find a connection by a flight number
 ```ts
-import { Airport } from '@flybywiresim/api-client';
+import { Telex } from '@flybywiresim/api-client';
 
 Telex.findConnection(flight)
   .then(data => {
@@ -228,7 +228,7 @@ This will only return an active flight since flight numbers can be reused.
 
 #### Count active connections
 ```ts
-import { Airport } from '@flybywiresim/api-client';
+import { Telex } from '@flybywiresim/api-client';
 
 Telex.countConnections()
   .then(data => {
