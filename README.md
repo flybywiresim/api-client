@@ -1,5 +1,4 @@
-<img align="right" width="auto" height="auto" src="https://raw.githubusercontent.com/flybywiresim/fbw-branding/master/svg/FBW-Logo.svg" alt="FlyByWireSimulations">
-
+![FlyByWireLogo](https://raw.githubusercontent.com/flybywiresim/fbw-branding/master/svg/FBW-Logo.svg)
 # FlyByWire Simulations API Client
 
 The official JavaScript client for the FBW API.
