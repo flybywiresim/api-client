@@ -1,4 +1,4 @@
-![FlyByWireLogo](https://raw.githubusercontent.com/flybywiresim/fbw-branding/master/svg/FBW-Logo.svg)
+# <img src="https://raw.githubusercontent.com/flybywiresim/fbw-branding/master/svg/FBW-Logo.svg" placeholder="FlyByWire" width="400"/>
 # FlyByWire Simulations API Client
 
 The official JavaScript client for the FBW API.
@@ -183,7 +183,7 @@ Messages can only be received once and will be acknowledged by this transaction.
 ```ts
 import { Telex } from '@flybywiresim/api-client';
 
-Telex.fetchConnections(skip, take)
+Telex.fetchConnections(skip, take, bounds)
   .then(data => {
     console.log(data);
   }).catch(err => {
@@ -193,6 +193,7 @@ Telex.fetchConnections(skip, take)
 
 - `skip` is a number and tells the backend to skip the first n connections.
 - `take` is a number and tells the backend how many connections to send.
+- `bounds` is an optional bounding box. Query only connections within this area.
 
 `take` and `skip` are used to control the pagination. A maximum of 100 entries can be fetched at a time.
 
