@@ -84,6 +84,13 @@ export declare class Paginated<T> {
     total: number;
 }
 
+export declare class Bounds {
+    north: number;
+    east: number;
+    south: number;
+    west: number;
+}
+
 export class HttpError extends Error {
     public readonly status;
 
@@ -280,13 +287,19 @@ export class Telex {
             });
     }
 
-    public static fetchConnections(skip?: number, take?: number): Promise<Paginated<TelexConnection>> {
+    public static fetchConnections(skip?: number, take?: number, bounds?: Bounds): Promise<Paginated<TelexConnection>> {
         let url = new URL(`/txcxn`, NXApi.url);
         if (skip) {
             url.searchParams.set("skip", skip.toString());
         }
         if (take) {
             url.searchParams.append("take", take.toString());
+        }
+        if (bounds) {
+            url.searchParams.append("north", bounds.north.toString());
+            url.searchParams.append("east", bounds.east.toString());
+            url.searchParams.append("south", bounds.south.toString());
+            url.searchParams.append("west", bounds.west.toString());
         }
 
         return fetch(url.href, {method: "GET"})
