@@ -79,6 +79,17 @@ export declare class AircraftStatus {
     aircraftType: string;
 }
 
+export declare class CommitInfo {
+    sha: string;
+    timestamp: Date;
+}
+
+export declare class ReleaseInfo {
+    name: string;
+    publishedAt: Date;
+    htmlUrl: string;
+}
+
 export declare class Paginated<T> {
     results: T[];
     count: number;
@@ -387,6 +398,42 @@ export class Airport {
         }
 
         let url = new URL(`/api/v1/airport/${icao}`, NXApi.url);
+
+        return fetch(url.href)
+          .then((response) => {
+              if (!response.ok) {
+                  throw new HttpError(response.status);
+              }
+
+              return response.json();
+          });
+    }
+}
+
+export class GitVersions {
+    public static getNewestCommit(user: string, repo: string, branch: string): Promise<CommitInfo> {
+        if (!user || !repo || !branch) {
+            throw new Error("Missing argument");
+        }
+
+        let url = new URL(`/api/v1/git-versions/${user}/${repo}/branches/${branch}`, NXApi.url);
+
+        return fetch(url.href)
+          .then((response) => {
+              if (!response.ok) {
+                  throw new HttpError(response.status);
+              }
+
+              return response.json();
+          });
+    }
+
+    public static getReleases(user: string, repo: string): Promise<ReleaseInfo[]> {
+        if (!user || !repo) {
+            throw new Error("Missing argument");
+        }
+
+        let url = new URL(`/api/v1/git-versions/${user}/${repo}/releases`, NXApi.url);
 
         return fetch(url.href)
           .then((response) => {
