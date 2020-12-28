@@ -28,6 +28,7 @@ export declare class AirportResponse {
     elevation: number;
     continent: string;
     country: string;
+    transAlt: number;
 }
 
 export declare class TelexConnection {
