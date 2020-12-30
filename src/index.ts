@@ -332,19 +332,14 @@ export class Telex {
         let total = 0;
 
         do {
-            try {
-                const data = await Telex.fetchConnections(skip, 100, bounds);
+            const data = await Telex.fetchConnections(skip, 100, bounds);
 
-                total = data.total;
-                skip += data.count;
-                flights = flights.concat(data.results);
+            total = data.total;
+            skip += data.count;
+            flights = flights.concat(data.results);
 
-                if (stageCallback) {
-                    stageCallback(flights);
-                }
-            } catch (err) {
-                console.error(err);
-                break;
+            if (stageCallback) {
+                stageCallback(flights);
             }
         }
         while (total > skip);
