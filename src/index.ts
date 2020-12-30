@@ -103,6 +103,8 @@ export declare class Bounds {
     west: number;
 }
 
+export declare type StageCallback = (flights: TelexConnection[]) => void;
+
 export class HttpError extends Error {
     public readonly status;
 
@@ -322,6 +324,32 @@ export class Telex {
 
                 return response.json();
             });
+    }
+
+    public static async fetchAllConnections(bounds?: Bounds, stageCallback?: StageCallback): Promise<TelexConnection[]> {
+        let flights: TelexConnection[] = [];
+        let skip = 0;
+        let total = 0;
+
+        do {
+            try {
+                const data = await Telex.fetchConnections(skip, 100, bounds);
+
+                total = data.total;
+                skip += data.count;
+                flights = flights.concat(data.results);
+
+                if (stageCallback) {
+                    stageCallback(flights);
+                }
+            } catch (err) {
+                console.error(err);
+                break;
+            }
+        }
+        while (total > skip);
+
+        return flights;
     }
 
     public static fetchConnection(id: string): Promise<TelexConnection> {
