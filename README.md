@@ -179,7 +179,7 @@ Messages can only be received once and will be acknowledged by this transaction.
 
 ### TELEX Querying
 
-#### Fetch all active connections
+#### Fetch a single page of active connections
 ```ts
 import { Telex } from '@flybywiresim/api-client';
 
@@ -196,6 +196,21 @@ Telex.fetchConnections(skip, take, bounds)
 - `bounds` is an optional bounding box. Query only connections within this area.
 
 `take` and `skip` are used to control the pagination. A maximum of 100 entries can be fetched at a time.
+
+#### Fetch all active connections
+```ts
+import { Telex } from '@flybywiresim/api-client';
+
+Telex.fetchAllConnections(bounds, callback)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
+- `bounds` is an optional bounding box. Query only connections within this area.
+- `callback` gets called after every fetched page.
 
 #### Fetch a certain connection
 ```ts
