@@ -360,7 +360,7 @@ export class Telex {
             });
     }
 
-    public static findConnection(flightNumber: string): Promise<TelexConnection> {
+    public static findConnections(flightNumber: string): Promise<TelexConnection[]> {
         let url = new URL(`/txcxn/_find`, NXApi.url);
         url.searchParams.set("flight", flightNumber);
 
