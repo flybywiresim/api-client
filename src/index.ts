@@ -431,6 +431,31 @@ export class Airport {
               return response.json();
           });
     }
+
+    public static getBatch(icaos: string[]): Promise<AirportResponse[]> {
+        if (!icaos) {
+            throw new Error("No ICAOs provided");
+        }
+
+        const body = {
+            icaos
+        };
+        const headers = {
+            "Content-Type": "application/json"
+        };
+
+
+        let url = new URL(`/api/v1/airport/_batch`, NXApi.url);
+
+        return fetch(url.href, {method: "POST", body: JSON.stringify(body), headers})
+          .then((response) => {
+              if (!response.ok) {
+                  throw new HttpError(response.status);
+              }
+
+              return response.json();
+          });
+    }
 }
 
 export class GitVersions {
