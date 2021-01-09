@@ -56,7 +56,7 @@ export declare class TelexMessage {
     message: string;
     isProfane: boolean;
     from: TelexConnection;
-    to: TelexConnection;
+    to?: TelexConnection;
 }
 
 export declare class Token {
@@ -121,6 +121,61 @@ export class TelexNotConnectedError extends Error {
 }
 
 
+function _get<T>(url: URL, headers?: any): Promise<T> {
+    return fetch(url.href, { headers })
+        .then((response) => {
+            if (!response.ok) {
+                throw new HttpError(response.status);
+            }
+
+            return response.json();
+        });
+}
+
+function _delete(url: URL, headers?: any): Promise<void> {
+    return fetch(url.href, { method: "DELETE", headers })
+        .then((response) => {
+            if (!response.ok) {
+                throw new HttpError(response.status);
+            }
+
+            return;
+        });
+}
+
+function _post<T>(url: URL, body: any, headers?: any): Promise<T> {
+    const headersToSend = {
+        "Content-Type": "application/json",
+        ...headers
+    };
+
+    return fetch(url.href, { method: "POST", body: JSON.stringify(body), headers: headersToSend })
+        .then((response) => {
+            if (!response.ok) {
+                throw new HttpError(response.status);
+            }
+
+            return response.json();
+        });
+}
+
+function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
+    const headersToSend = {
+        "Content-Type": "application/json",
+        ...headers
+    };
+
+    return fetch(url.href, { method: "PUT", body: JSON.stringify(body), headers: headersToSend })
+        .then((response) => {
+            if (!response.ok) {
+                throw new HttpError(response.status);
+            }
+
+            return response.json();
+        });
+}
+
+
 export class NXApi {
     public static url = new URL("https://api.flybywiresim.com");
 }
@@ -131,19 +186,12 @@ export class Metar {
             throw new Error("No ICAO provided");
         }
 
-        let url = new URL(`/metar/${icao}`, NXApi.url);
+        const url = new URL(`/metar/${icao}`, NXApi.url);
         if (source) {
             url.searchParams.set("source", source);
         }
 
-        return fetch(url.href)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        return _get<MetarResponse>(url);
     }
 }
 
@@ -153,19 +201,12 @@ export class Atis {
             throw new Error("No ICAO provided");
         }
 
-        let url = new URL(`/atis/${icao}`, NXApi.url);
+        const url = new URL(`/atis/${icao}`, NXApi.url);
         if (source) {
             url.searchParams.set("source", source);
         }
 
-        return fetch(url.href)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        return _get<AtisResponse>(url);
     }
 }
 
@@ -175,19 +216,12 @@ export class Taf {
             throw new Error("No ICAO provided");
         }
 
-        let url = new URL(`/taf/${icao}`, NXApi.url);
+        const url = new URL(`/taf/${icao}`, NXApi.url);
         if (source) {
             url.searchParams.set("source", source);
         }
 
-        return fetch(url.href)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        return _get<TafResponse>(url);
     }
 }
 
@@ -197,112 +231,57 @@ export class Telex {
     public static refreshRate = 15000;
 
     public static connect(status: AircraftStatus): Promise<Token> {
-        const connectBody = Telex.buildBody(status);
-        const headers = {
-            "Content-Type": "application/json"
-        };
-
-        let url = new URL(`/txcxn`, NXApi.url);
-
-        return fetch(url.href, {method: "POST", body: JSON.stringify(connectBody), headers})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json()
-                    .then((data) => {
-                        Telex.accessToken = data.accessToken;
-                        return data;
-                    });
+        return _post<Token>(new URL(`/txcxn`, NXApi.url), Telex.buildBody(status))
+            .then(res => {
+                Telex.accessToken = res.accessToken;
+                return res;
             });
     }
 
     public static update(status: AircraftStatus): Promise<TelexConnection> {
         Telex.connectionOrThrow();
 
-        const connectBody = Telex.buildBody(status);
-        const headers = {
-            "Content-Type": "application/json",
+        return _put<TelexConnection>(new URL(`/txcxn`, NXApi.url), Telex.buildBody(status), {
             Authorization: Telex.buildToken()
-        };
-
-        let url = new URL(`/txcxn`, NXApi.url);
-
-        return fetch(url.href, {method: "PUT", body: JSON.stringify(connectBody), headers})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        })
+            .then(Telex.mapConnection);
     }
 
     public static disconnect(): Promise<void> {
         Telex.connectionOrThrow();
 
-        const headers = {
+        return _delete(new URL(`/txcxn`, NXApi.url), {
             Authorization: Telex.buildToken()
-        };
-
-        let url = new URL(`/txcxn`, NXApi.url);
-
-        return fetch(url.href, {method: "DELETE", headers})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
+        })
+            .then(() => {
                 Telex.accessToken = "";
+                return;
             });
     }
 
     public static sendMessage(recipientFlight: string, message: string): Promise<TelexMessage> {
         Telex.connectionOrThrow();
 
-        const body = {
+        return _post<TelexMessage>(new URL(`/txmsg`, NXApi.url), {
             to: recipientFlight,
-            message: message,
-        };
-        const headers = {
-            "Content-Type": "application/json",
+            message: message
+        }, {
             Authorization: Telex.buildToken()
-        };
-
-        let url = new URL(`/txmsg`, NXApi.url);
-
-        return fetch(url.href, {method: "POST", body: JSON.stringify(body), headers})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        })
+            .then(Telex.mapMessage);
     }
 
     public static fetchMessages(): Promise<TelexMessage[]> {
         Telex.connectionOrThrow();
 
-        const headers = {
+        return _get<TelexMessage[]>(new URL(`/txmsg`, NXApi.url), {
             Authorization: Telex.buildToken()
-        };
-
-        let url = new URL(`/txmsg`, NXApi.url);
-
-        return fetch(url.href, {method: "GET", headers})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        })
+            .then(res => res.map(Telex.mapMessage));
     }
 
     public static fetchConnections(skip?: number, take?: number, bounds?: Bounds): Promise<Paginated<TelexConnection>> {
-        let url = new URL(`/txcxn`, NXApi.url);
+        const url = new URL(`/txcxn`, NXApi.url);
         if (skip) {
             url.searchParams.set("skip", skip.toString());
         }
@@ -316,13 +295,12 @@ export class Telex {
             url.searchParams.append("west", bounds.west.toString());
         }
 
-        return fetch(url.href, {method: "GET"})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
+        return _get<Paginated<TelexConnection>>(url)
+            .then(res => {
+                return {
+                    ...res,
+                    results: res.results.map(Telex.mapConnection)
+                };
             });
     }
 
@@ -348,50 +326,28 @@ export class Telex {
     }
 
     public static fetchConnection(id: string): Promise<TelexConnection> {
-        let url = new URL(`/txcxn/${id}`, NXApi.url);
-
-        return fetch(url.href, {method: "GET"})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        return _get<TelexConnection>(new URL(`/txcxn/${id}`, NXApi.url))
+            .then(Telex.mapConnection);
     }
 
     public static findConnections(flightNumber: string): Promise<TelexConnection[]> {
-        let url = new URL(`/txcxn/_find`, NXApi.url);
+        const url = new URL(`/txcxn/_find`, NXApi.url);
         url.searchParams.set("flight", flightNumber);
 
-        return fetch(url.href, {method: "GET"})
-            .then((response) => {
-                if (!response.ok) {
-                    throw new HttpError(response.status);
-                }
-
-                return response.json();
-            });
+        return _get<TelexConnection[]>(url)
+            .then(res => res.map(Telex.mapConnection));
     }
 
     public static countConnections(): Promise<number> {
-        let url = new URL(`/txcxn/_count`, NXApi.url);
-
-        return fetch(url.href, {method: "GET"})
-          .then((response) => {
-              if (!response.ok) {
-                  throw new HttpError(response.status);
-              }
-
-              return response.json();
-          });
+        return _get<number>(new URL(`/txcxn/_count`, NXApi.url));
     }
+
 
     private static buildBody(status: AircraftStatus) {
         return {
             location: {
                 x: status.location.long,
-                y: status.location.lat,
+                y: status.location.lat
             },
             trueAltitude: status.trueAltitude,
             heading: status.heading,
@@ -399,7 +355,7 @@ export class Telex {
             destination: status.destination,
             freetextEnabled: status.freetextEnabled,
             flight: status.flight,
-            aircraftType: status.aircraftType,
+            aircraftType: status.aircraftType
         };
     }
 
@@ -412,6 +368,31 @@ export class Telex {
             throw new TelexNotConnectedError();
         }
     }
+
+    private static mapConnection(connection: TelexConnection): TelexConnection {
+        return {
+            ...connection,
+            firstContact: new Date(connection.firstContact),
+            lastContact: new Date(connection.lastContact)
+        };
+    }
+
+    private static mapMessage(message: TelexMessage): TelexMessage {
+        const msg: TelexMessage = {
+            ...message,
+            createdAt: new Date(message.createdAt)
+        };
+
+        if (message.from) {
+            msg.from = Telex.mapConnection(message.from);
+        }
+
+        if (message.to) {
+            msg.to = Telex.mapConnection(message.to);
+        }
+
+        return msg;
+    }
 }
 
 export class Airport {
@@ -420,16 +401,7 @@ export class Airport {
             throw new Error("No ICAO provided");
         }
 
-        let url = new URL(`/api/v1/airport/${icao}`, NXApi.url);
-
-        return fetch(url.href)
-          .then((response) => {
-              if (!response.ok) {
-                  throw new HttpError(response.status);
-              }
-
-              return response.json();
-          });
+        return _get<AirportResponse>(new URL(`/api/v1/airport/${icao}`, NXApi.url));
     }
 
     public static getBatch(icaos: string[]): Promise<AirportResponse[]> {
@@ -437,24 +409,7 @@ export class Airport {
             throw new Error("No ICAOs provided");
         }
 
-        const body = {
-            icaos
-        };
-        const headers = {
-            "Content-Type": "application/json"
-        };
-
-
-        let url = new URL(`/api/v1/airport/_batch`, NXApi.url);
-
-        return fetch(url.href, {method: "POST", body: JSON.stringify(body), headers})
-          .then((response) => {
-              if (!response.ok) {
-                  throw new HttpError(response.status);
-              }
-
-              return response.json();
-          });
+        return _post<AirportResponse[]>(new URL(`/api/v1/airport/_batch`, NXApi.url), { icaos });
     }
 }
 
@@ -464,16 +419,13 @@ export class GitVersions {
             throw new Error("Missing argument");
         }
 
-        let url = new URL(`/api/v1/git-versions/${user}/${repo}/branches/${branch}`, NXApi.url);
-
-        return fetch(url.href)
-          .then((response) => {
-              if (!response.ok) {
-                  throw new HttpError(response.status);
-              }
-
-              return response.json();
-          });
+        return _get<CommitInfo>(new URL(`/api/v1/git-versions/${user}/${repo}/branches/${branch}`, NXApi.url))
+            .then((res: CommitInfo) => {
+                return {
+                    ...res,
+                    timestamp: new Date(res.timestamp)
+                };
+            });
     }
 
     public static getReleases(user: string, repo: string): Promise<ReleaseInfo[]> {
@@ -481,15 +433,12 @@ export class GitVersions {
             throw new Error("Missing argument");
         }
 
-        let url = new URL(`/api/v1/git-versions/${user}/${repo}/releases`, NXApi.url);
-
-        return fetch(url.href)
-          .then((response) => {
-              if (!response.ok) {
-                  throw new HttpError(response.status);
-              }
-
-              return response.json();
-          });
+        return _get<ReleaseInfo[]>(new URL(`/api/v1/git-versions/${user}/${repo}/releases`, NXApi.url))
+            .then(res => res.map(rel => {
+                return {
+                    ...rel,
+                    publishedAt: new Date(rel.publishedAt)
+                };
+            }));
     }
 }
