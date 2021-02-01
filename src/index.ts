@@ -49,6 +49,11 @@ export declare class TelexConnection {
     destination: string;
 }
 
+export declare class SearchResult<T> {
+    fullMatch?: T;
+    matches: T[];
+}
+
 export declare class TelexMessage {
     id: string;
     createdAt: Date;
@@ -330,12 +335,17 @@ export class Telex {
             .then(Telex.mapConnection);
     }
 
-    public static findConnections(flightNumber: string): Promise<TelexConnection[]> {
+    public static findConnections(flightNumber: string): Promise<SearchResult<TelexConnection>> {
         const url = new URL(`/txcxn/_find`, NXApi.url);
         url.searchParams.set("flight", flightNumber);
 
-        return _get<TelexConnection[]>(url)
-            .then(res => res.map(Telex.mapConnection));
+        return _get<SearchResult<TelexConnection>>(url)
+            .then(res => {
+                return {
+                    matches: res.matches.map(Telex.mapConnection),
+                    fullMatch: res.fullMatch ? Telex.mapConnection(res.fullMatch) : undefined,
+                }
+            });
     }
 
     public static countConnections(): Promise<number> {
