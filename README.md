@@ -226,7 +226,7 @@ Telex.fetchConnection(id)
 
 - `id` is the unique identifier of the connection.
 
-#### Find a connection by a flight number
+#### Find all active connections matching a flight number
 ```ts
 import { Telex } from '@flybywiresim/api-client';
 
@@ -240,8 +240,6 @@ Telex.findConnection(flight)
 
 - `flight` is the flight number to search for.
 
-This will only return an active flight since flight numbers can be reused.
-
 #### Count active connections
 ```ts
 import { Telex } from '@flybywiresim/api-client';
@@ -253,6 +251,71 @@ Telex.countConnections()
     console.error(err);
 });
 ```
+
+### Github
+
+#### Get the newest commit for a branch
+```ts
+import { GitVersions } from '@flybywiresim/api-client';
+
+GitVersions.getNewestCommit(user, repo, branch)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
+- `user` the owner of the repository.
+- `repo` the repository.
+- `branch` the requested branch.
+
+#### Get all releases for a repository
+```ts
+import { GitVersions } from '@flybywiresim/api-client';
+
+GitVersions.getReleases(user, repo)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
+- `user` the owner of the repository.
+- `repo` the repository.
+
+#### Get open pull requests for a repository
+```ts
+import { GitVersions } from '@flybywiresim/api-client';
+
+GitVersions.getPulls(user, repo)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
+- `user` the owner of the repository.
+- `repo` the repository.
+
+#### Get the artifact URL for a pull request
+```ts
+import { GitVersions } from '@flybywiresim/api-client';
+
+GitVersions.getArtifact(user, repo, pull)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
+- `user` the owner of the repository.
+- `repo` the repository.
+- `pull` the number of the pull request.
+
 
 ## License
 
