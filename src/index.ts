@@ -95,6 +95,18 @@ export declare class ReleaseInfo {
     htmlUrl: string;
 }
 
+export declare class PullInfo {
+    number: number;
+    title: string;
+    author: string;
+    labels: string[];
+    isDraft: boolean;
+}
+
+export declare class ArtifactInfo {
+    artifactUrl: string;
+}
+
 export declare class Paginated<T> {
     results: T[];
     count: number;
@@ -450,5 +462,21 @@ export class GitVersions {
                     publishedAt: new Date(rel.publishedAt)
                 };
             }));
+    }
+
+    public static getPulls(user: string, repo: string): Promise<PullInfo[]> {
+        if (!user || !repo) {
+            throw new Error("Missing argument");
+        }
+
+        return _get<PullInfo[]>(new URL(`/api/v1/git-versions/${user}/${repo}/pulls`, NXApi.url));
+    }
+
+    public static getArtifact(user: string, repo: string, pull: string): Promise<ArtifactInfo> {
+        if (!user || !repo || !pull) {
+            throw new Error("Missing argument");
+        }
+
+        return _get<ArtifactInfo>(new URL(`/api/v1/git-versions/${user}/${repo}/pulls/${pull}/artifact`, NXApi.url));
     }
 }
