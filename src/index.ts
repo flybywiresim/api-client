@@ -95,11 +95,17 @@ export declare class ReleaseInfo {
     htmlUrl: string;
 }
 
+export declare class PullLabel {
+    id: string;
+    name: string;
+    color: string;
+}
+
 export declare class PullInfo {
     number: number;
     title: string;
     author: string;
-    labels: string[];
+    labels: PullLabel[];
     isDraft: boolean;
 }
 
