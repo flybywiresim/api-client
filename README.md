@@ -316,6 +316,18 @@ GitVersions.getArtifact(user, repo, pull)
 - `repo` the repository.
 - `pull` the number of the pull request.
 
+#### Get the charts for an airport
+```ts
+import { Charts } from '@flybywiresim/api-client';
+
+Charts.get(icao, source)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
 
 ## License
 
