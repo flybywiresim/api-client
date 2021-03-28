@@ -113,6 +113,15 @@ export declare class ArtifactInfo {
     artifactUrl: string;
 }
 
+export declare class Chart {
+    url: string;
+    name: string;
+}
+export declare class ChartsResponse {
+    icao: string;
+    charts?: Chart[];
+}
+
 export declare class Paginated<T> {
     results: T[];
     count: number;
@@ -484,5 +493,17 @@ export class GitVersions {
         }
 
         return _get<ArtifactInfo>(new URL(`/api/v1/git-versions/${user}/${repo}/pulls/${pull}/artifact`, NXApi.url));
+    }
+}
+
+export class Charts {
+    public static get(icao: string, source?: string): Promise<ChartsResponse> {
+        if (!icao) {
+            throw new Error("No ICAO provided");
+        }
+
+        const url = new URL(`/api/v1/charts/${icao}`, NXApi.url);
+
+        return _get<ChartsResponse>(url);
     }
 }
