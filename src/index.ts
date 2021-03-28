@@ -496,7 +496,7 @@ export class Charts {
             throw new Error("No ICAO provided");
         }
 
-        const url = new URL(`/api/charts/${icao}`, NXApi.url);
+        const url = new URL(`/api/v1/charts/${icao}`, NXApi.url);
 
         return _get<ChartsResponse>(url);
     }
