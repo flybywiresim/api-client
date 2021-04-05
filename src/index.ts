@@ -465,12 +465,14 @@ export class GitVersions {
             });
     }
 
-    public static getReleases(user: string, repo: string): Promise<ReleaseInfo[]> {
+    public static getReleases(user: string, repo: string, includePreReleases?: boolean): Promise<ReleaseInfo[]> {
         if (!user || !repo) {
             throw new Error("Missing argument");
         }
 
-        return _get<ReleaseInfo[]>(new URL(`/api/v1/git-versions/${user}/${repo}/releases`, NXApi.url))
+        return _get<ReleaseInfo[]>(
+            new URL(`/api/v1/git-versions/${user}/${repo}/releases?${includePreReleases === true}`, NXApi.url)
+        )
             .then(res => res.map(rel => {
                 return {
                     ...rel,
