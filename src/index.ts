@@ -93,6 +93,7 @@ export declare class ReleaseInfo {
     name: string;
     publishedAt: Date;
     htmlUrl: string;
+    body: string;
 }
 
 export declare class PullLabel {
