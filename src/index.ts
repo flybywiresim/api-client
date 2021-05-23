@@ -220,7 +220,7 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
 
 
 export class NXApi {
-    public static url = new URL("http://localhost:3000");
+    public static url = new URL("https://api.flybywiresim.com");
 }
 
 export class Metar {
