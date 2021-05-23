@@ -31,6 +31,16 @@ export declare class AirportResponse {
     transAlt: number;
 }
 
+export declare class ATCInfo {
+    callsign:string;
+    frequency:string;
+    visualRange:number;
+    textAtis: string[];
+    type:string;
+    latitude?: number;
+    longitude?: number;
+  }
+
 export declare class TelexConnection {
     id: string;
     isActive: boolean;
@@ -210,7 +220,7 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
 
 
 export class NXApi {
-    public static url = new URL("https://api.flybywiresim.com");
+    public static url = new URL("http://localhost:3000");
 }
 
 export class Metar {
@@ -451,6 +461,12 @@ export class Airport {
     }
 }
 
+export class Online {
+    public static getAtc(source: string): Promise<ATCInfo[]> {
+        const url = new URL(`/online/atc?source=${source}`, NXApi.url);
+        return _get<ATCInfo[]>(url);
+    }
+}
 export class GitVersions {
     public static getNewestCommit(user: string, repo: string, branch: string): Promise<CommitInfo> {
         if (!user || !repo || !branch) {
