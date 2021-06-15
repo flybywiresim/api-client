@@ -21,6 +21,7 @@ export declare class AtisResponse {
 
 export declare class AirportResponse {
     icao: string;
+    iata: string;
     type: string;
     name: string;
     lat: number;

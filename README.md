@@ -91,6 +91,24 @@ Airport.get(icao)
 });
 ```
 
+
+### Airport
+```ts
+import { Atis } from '@flybywiresim/api-client';
+
+ATC.get(source)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
+- `source` is the selected datasource for the ATC.
+  Valid sources are:
+  - vatsim
+  - ivao
+
 - `icao` is a string of the the airport ICAO code to search for.
 
 ### TELEX connection handling
