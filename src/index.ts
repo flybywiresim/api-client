@@ -474,7 +474,7 @@ export class Airport {
 
 export class ATC {
     public static getAtc(source: string): Promise<ATCInfo[]> {
-        const url = new URL(`/v1/atc?source=${source}`, NXApi.url);
+        const url = new URL(`/api/v1/atc?source=${source}`, NXApi.url);
         return _get<ATCInfo[]>(url);
     }
 }
