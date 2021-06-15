@@ -32,13 +32,13 @@ export declare class AirportResponse {
 }
 
 export enum AtcType {
-    unknow,
-    delivery,
-    ground,
-    tower,
-    departure,
-    approach,
-    radar
+    UNKNOWN,
+    DELIVERY,
+    GROUND,
+    TOWER,
+    DEPARTURE,
+    APPROACH,
+    RADAR
   }
 
 export declare class ATCInfo {
@@ -231,6 +231,7 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
 
 export class NXApi {
     public static url = new URL("https://api.flybywiresim.com");
+    //public static url = new URL("http://localhost:3000");
 }
 
 export class Metar {
@@ -473,10 +474,11 @@ export class Airport {
 
 export class ATC {
     public static getAtc(source: string): Promise<ATCInfo[]> {
-        const url = new URL(`/atc?source=${source}`, NXApi.url);
+        const url = new URL(`/v1/atc?source=${source}`, NXApi.url);
         return _get<ATCInfo[]>(url);
     }
 }
+
 export class GitVersions {
     public static getNewestCommit(user: string, repo: string, branch: string): Promise<CommitInfo> {
         if (!user || !repo || !branch) {
