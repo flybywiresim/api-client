@@ -31,6 +31,26 @@ export declare class AirportResponse {
     transAlt: number;
 }
 
+export enum AtcType {
+    UNKNOWN,
+    DELIVERY,
+    GROUND,
+    TOWER,
+    DEPARTURE,
+    APPROACH,
+    RADAR
+  }
+
+export declare class ATCInfo {
+    callsign:string;
+    frequency:string;
+    visualRange:number;
+    textAtis: string[];
+    type:AtcType;
+    latitude?: number;
+    longitude?: number;
+  }
+
 export declare class TelexConnection {
     id: string;
     isActive: boolean;
@@ -211,6 +231,7 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
 
 export class NXApi {
     public static url = new URL("https://api.flybywiresim.com");
+    //public static url = new URL("http://localhost:3000");
 }
 
 export class Metar {
@@ -448,6 +469,13 @@ export class Airport {
         }
 
         return _post<AirportResponse[]>(new URL(`/api/v1/airport/_batch`, NXApi.url), { icaos });
+    }
+}
+
+export class ATC {
+    public static getAtc(source: string): Promise<ATCInfo[]> {
+        const url = new URL(`/api/v1/atc?source=${source}`, NXApi.url);
+        return _get<ATCInfo[]>(url);
     }
 }
 
