@@ -39,7 +39,8 @@ export enum AtcType {
     TOWER,
     DEPARTURE,
     APPROACH,
-    RADAR
+    RADAR,
+    ATIS
   }
 
 export declare class ATCInfo {
