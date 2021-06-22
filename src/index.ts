@@ -53,6 +53,19 @@ export declare class ATCInfo {
     longitude?: number;
   }
 
+  export declare class PilotInfo {
+    callsign: string;  
+    name: string;
+    latitude?: number;
+    longitude?: number;
+    altitude:number;
+    heading:number;
+    groundspeed:number;
+    departure: string;
+    arrival: string;
+    aircraft: string;
+  }
+
 export declare class TelexConnection {
     id: string;
     isActive: boolean;
@@ -233,7 +246,7 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
 
 export class NXApi {
     public static url = new URL("https://api.flybywiresim.com");
-    //public static url = new URL("http://localhost:3000");
+    // public static url = new URL("http://localhost:3000");
 }
 
 export class Metar {
@@ -478,6 +491,13 @@ export class ATC {
     public static getAtc(source: string): Promise<ATCInfo[]> {
         const url = new URL(`/api/v1/atc?source=${source}`, NXApi.url);
         return _get<ATCInfo[]>(url);
+    }
+}
+
+export class Pilot {
+    public static getPilots(source: string) : Promise<PilotInfo[]>{
+        const url = new URL(`/api/v1/pilot?source=${source}`, NXApi.url);
+        return _get<PilotInfo[]>(url);
     }
 }
 
