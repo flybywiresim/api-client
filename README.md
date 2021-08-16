@@ -91,8 +91,10 @@ Airport.get(icao)
 });
 ```
 
+- `icao` is a string of the the airport ICAO code to search for.
 
-### Airport
+
+### ATC
 ```ts
 import { Atis } from '@flybywiresim/api-client';
 
@@ -109,7 +111,6 @@ ATC.get(source)
   - vatsim
   - ivao
 
-- `icao` is a string of the the airport ICAO code to search for.
 
 ### TELEX connection handling
 
@@ -334,6 +335,9 @@ GitVersions.getArtifact(user, repo, pull)
 - `repo` the repository.
 - `pull` the number of the pull request.
 
+
+### Charts
+
 #### Get the charts for an airport
 ```ts
 import { Charts } from '@flybywiresim/api-client';
@@ -345,6 +349,24 @@ Charts.get(icao, source)
     console.error(err);
 });
 ```
+
+- `icao` is a string of the the airport ICAO code to search for.
+
+
+### GNSS
+
+#### Fetch data for all GNSS satellites
+```ts
+import { Atis } from '@flybywiresim/api-client';
+
+GNSS.get()
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
+
 
 
 ## License

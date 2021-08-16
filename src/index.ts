@@ -108,6 +108,7 @@ export declare class AircraftStatus {
 
 export declare class CommitInfo {
     sha: string;
+    shortSha: string;
     timestamp: Date;
 }
 
@@ -140,9 +141,30 @@ export declare class Chart {
     url: string;
     name: string;
 }
+
 export declare class ChartsResponse {
     icao: string;
     charts?: Chart[];
+}
+
+export declare class GNSSResponse {
+    name: string;
+    id: string;
+    epoch: Date;
+    meanMotion: number;
+    eccentricity: number;
+    inclination: number;
+    raOfAscNode: number;
+    argOfPericenter: number;
+    meanAnomaly: number;
+    ephemerisType: number;
+    classificationType: string;
+    noradCatId: number;
+    elementSetNo: number;
+    revAtEpoch: number;
+    bstar: number;
+    meanMotionDot: number;
+    meanMotionDdot: number;
 }
 
 export declare class Paginated<T> {
@@ -233,7 +255,7 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
 
 export class NXApi {
     public static url = new URL("https://api.flybywiresim.com");
-    //public static url = new URL("http://localhost:3000");
+    // public static url = new URL("http://localhost:3000");
 }
 
 export class Metar {
@@ -538,5 +560,21 @@ export class Charts {
         const url = new URL(`/api/v1/charts/${icao}`, NXApi.url);
 
         return _get<ChartsResponse>(url);
+    }
+}
+
+export class GNSS {
+    public static get(): Promise<GNSSResponse[]> {
+        const url = new URL(`/api/v1/gnss`, NXApi.url);
+
+        return _get<GNSSResponse[]>(url)
+            .then(res => res.map(GNSS.mapResult));
+    }
+
+    private static mapResult(response: GNSSResponse): GNSSResponse {
+        return {
+            ...response,
+            epoch: new Date(response.epoch)
+        };
     }
 }
