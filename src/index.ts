@@ -1,3 +1,5 @@
+import axios from "axios";
+
 // Types
 export declare class MetarResponse {
     icao: string;
@@ -41,17 +43,17 @@ export enum AtcType {
     APPROACH,
     RADAR,
     ATIS
-  }
+}
 
 export declare class ATCInfo {
-    callsign:string;
-    frequency:string;
-    visualRange:number;
+    callsign: string;
+    frequency: string;
+    visualRange: number;
     textAtis: string[];
-    type:AtcType;
+    type: AtcType;
     latitude?: number;
     longitude?: number;
-  }
+}
 
 export declare class TelexConnection {
     id: string;
@@ -199,25 +201,13 @@ export class TelexNotConnectedError extends Error {
 
 
 function _get<T>(url: URL, headers?: any): Promise<T> {
-    return fetch(url.href, { headers })
-        .then((response) => {
-            if (!response.ok) {
-                throw new HttpError(response.status);
-            }
-
-            return response.json();
-        });
+    return axios.get<T>(url.href, { headers })
+        .then(res => res.data);
 }
 
 function _delete(url: URL, headers?: any): Promise<void> {
-    return fetch(url.href, { method: "DELETE", headers })
-        .then((response) => {
-            if (!response.ok) {
-                throw new HttpError(response.status);
-            }
-
-            return;
-        });
+    return axios.delete(url.href, { headers })
+        .then(res => res.data);
 }
 
 function _post<T>(url: URL, body: any, headers?: any): Promise<T> {
@@ -226,14 +216,8 @@ function _post<T>(url: URL, body: any, headers?: any): Promise<T> {
         ...headers
     };
 
-    return fetch(url.href, { method: "POST", body: JSON.stringify(body), headers: headersToSend })
-        .then((response) => {
-            if (!response.ok) {
-                throw new HttpError(response.status);
-            }
-
-            return response.json();
-        });
+    return axios.post<T>(url.href, body, { headers: headersToSend })
+        .then(res => res.data);
 }
 
 function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
@@ -242,14 +226,8 @@ function _put<T>(url: URL, body: any, headers?: any): Promise<T> {
         ...headers
     };
 
-    return fetch(url.href, { method: "PUT", body: JSON.stringify(body), headers: headersToSend })
-        .then((response) => {
-            if (!response.ok) {
-                throw new HttpError(response.status);
-            }
-
-            return response.json();
-        });
+    return axios.put<T>(url.href, body, { headers: headersToSend })
+        .then(res => res.data);
 }
 
 
@@ -259,7 +237,7 @@ export class NXApi {
 }
 
 export class Metar {
-    public static get(icao: string, source?: string): Promise<MetarResponse> {
+    public static async get(icao: string, source?: string): Promise<MetarResponse> {
         if (!icao) {
             throw new Error("No ICAO provided");
         }
@@ -274,7 +252,7 @@ export class Metar {
 }
 
 export class Atis {
-    public static get(icao: string, source?: string): Promise<AtisResponse> {
+    public static async get(icao: string, source?: string): Promise<AtisResponse> {
         if (!icao) {
             throw new Error("No ICAO provided");
         }
@@ -289,7 +267,7 @@ export class Atis {
 }
 
 export class Taf {
-    public static get(icao: string, source?: string): Promise<TafResponse> {
+    public static async get(icao: string, source?: string): Promise<TafResponse> {
         if (!icao) {
             throw new Error("No ICAO provided");
         }
@@ -306,8 +284,6 @@ export class Taf {
 export class Telex {
     private static accessToken: string;
 
-    public static refreshRate = 15000;
-
     public static connect(status: AircraftStatus): Promise<Token> {
         return _post<Token>(new URL(`/txcxn`, NXApi.url), Telex.buildBody(status))
             .then(res => {
@@ -316,7 +292,7 @@ export class Telex {
             });
     }
 
-    public static update(status: AircraftStatus): Promise<TelexConnection> {
+    public static async update(status: AircraftStatus): Promise<TelexConnection> {
         Telex.connectionOrThrow();
 
         return _put<TelexConnection>(new URL(`/txcxn`, NXApi.url), Telex.buildBody(status), {
@@ -325,7 +301,7 @@ export class Telex {
             .then(Telex.mapConnection);
     }
 
-    public static disconnect(): Promise<void> {
+    public static async disconnect(): Promise<void> {
         Telex.connectionOrThrow();
 
         return _delete(new URL(`/txcxn`, NXApi.url), {
@@ -337,7 +313,7 @@ export class Telex {
             });
     }
 
-    public static sendMessage(recipientFlight: string, message: string): Promise<TelexMessage> {
+    public static async sendMessage(recipientFlight: string, message: string): Promise<TelexMessage> {
         Telex.connectionOrThrow();
 
         return _post<TelexMessage>(new URL(`/txmsg`, NXApi.url), {
@@ -349,7 +325,7 @@ export class Telex {
             .then(Telex.mapMessage);
     }
 
-    public static fetchMessages(): Promise<TelexMessage[]> {
+    public static async fetchMessages(): Promise<TelexMessage[]> {
         Telex.connectionOrThrow();
 
         return _get<TelexMessage[]>(new URL(`/txmsg`, NXApi.url), {
@@ -416,8 +392,8 @@ export class Telex {
             .then(res => {
                 return {
                     matches: res.matches.map(Telex.mapConnection),
-                    fullMatch: res.fullMatch ? Telex.mapConnection(res.fullMatch) : undefined,
-                }
+                    fullMatch: res.fullMatch ? Telex.mapConnection(res.fullMatch) : undefined
+                };
             });
     }
 
@@ -497,14 +473,18 @@ export class Airport {
 }
 
 export class ATC {
-    public static getAtc(source: string): Promise<ATCInfo[]> {
+    public static async get(source: string): Promise<ATCInfo[]> {
+        if (!source) {
+            throw new Error("No source provided");
+        }
+
         const url = new URL(`/api/v1/atc?source=${source}`, NXApi.url);
         return _get<ATCInfo[]>(url);
     }
 }
 
 export class GitVersions {
-    public static getNewestCommit(user: string, repo: string, branch: string): Promise<CommitInfo> {
+    public static async getNewestCommit(user: string, repo: string, branch: string): Promise<CommitInfo> {
         if (!user || !repo || !branch) {
             throw new Error("Missing argument");
         }
@@ -518,7 +498,7 @@ export class GitVersions {
             });
     }
 
-    public static getReleases(user: string, repo: string, includePreReleases?: boolean): Promise<ReleaseInfo[]> {
+    public static async getReleases(user: string, repo: string, includePreReleases?: boolean): Promise<ReleaseInfo[]> {
         if (!user || !repo) {
             throw new Error("Missing argument");
         }
@@ -534,7 +514,7 @@ export class GitVersions {
             }));
     }
 
-    public static getPulls(user: string, repo: string): Promise<PullInfo[]> {
+    public static async getPulls(user: string, repo: string): Promise<PullInfo[]> {
         if (!user || !repo) {
             throw new Error("Missing argument");
         }
@@ -542,7 +522,7 @@ export class GitVersions {
         return _get<PullInfo[]>(new URL(`/api/v1/git-versions/${user}/${repo}/pulls`, NXApi.url));
     }
 
-    public static getArtifact(user: string, repo: string, pull: string): Promise<ArtifactInfo> {
+    public static async getArtifact(user: string, repo: string, pull: string): Promise<ArtifactInfo> {
         if (!user || !repo || !pull) {
             throw new Error("Missing argument");
         }
@@ -552,7 +532,7 @@ export class GitVersions {
 }
 
 export class Charts {
-    public static get(icao: string, source?: string): Promise<ChartsResponse> {
+    public static async get(icao: string): Promise<ChartsResponse> {
         if (!icao) {
             throw new Error("No ICAO provided");
         }
