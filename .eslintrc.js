@@ -47,5 +47,6 @@ module.exports = {
         'object-curly-newline': ['error', { multiline: true }],
         'no-await-in-loop': 'off',
         'no-console': 'off',
+        'max-classes-per-file': 'off',
     },
 };
