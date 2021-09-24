@@ -1,4 +1,4 @@
-import { Metar } from './index';
+import { Metar } from './metar';
 
 describe('METAR', () => {
     test('should return a METAR response', async () => {

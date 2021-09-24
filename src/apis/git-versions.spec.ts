@@ -1,4 +1,4 @@
-import { GitVersions } from './index';
+import { GitVersions } from './git-versions';
 
 describe('GitVersions', () => {
     describe('Get newest commit', () => {

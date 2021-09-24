@@ -1,10 +1,8 @@
-import { Charts } from './index';
+import { Charts } from './charts';
 
 describe('Charts', () => {
     test('should return a charts response', async () => {
-        await expect(Charts.get('KJFK')).resolves.toMatchObject({
-            icao: 'KJFK',
-        });
+        await expect(Charts.get('KJFK')).resolves.toMatchObject({ icao: 'KJFK' });
     });
 
     describe('error handling', () => {

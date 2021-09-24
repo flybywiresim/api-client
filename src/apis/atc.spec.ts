@@ -1,4 +1,4 @@
-import { ATC } from './index';
+import { ATC } from './atc';
 
 describe('ATC', () => {
     test('should return an ATC response', async () => {

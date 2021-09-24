@@ -1,4 +1,4 @@
-import { Telex } from './index';
+import { Telex } from './telex';
 
 describe('TELEX with connection', () => {
     beforeAll(async () => {
