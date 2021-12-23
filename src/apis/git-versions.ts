@@ -56,13 +56,21 @@ export class GitVersions {
             }));
     }
 
-    public static async getReleases(user: string, repo: string, includePreReleases?: boolean): Promise<ReleaseInfo[]> {
+    public static async getReleases(user: string, repo: string, includePreReleases?: boolean, skip?: number, take?: number): Promise<ReleaseInfo[]> {
         if (!user || !repo) {
             throw new Error('Missing argument');
         }
 
+        if (skip < 0 || take < 0) {
+            throw new Error("skip or take cannot be negative");
+        }
+
+        const takePreReleasesArg = `?includePreReleases=${includePreReleases === true}`;
+        const skipArg = skip !== undefined ? `&skip=` + skip : "";
+        const takeArg = take !== undefined ? `&take=` + take : "";
+
         return get<ReleaseInfo[]>(
-            new URL(`/api/v1/git-versions/${user}/${repo}/releases?${includePreReleases === true}`, NXApi.url),
+            new URL(`/api/v1/git-versions/${user}/${repo}/releases${takePreReleasesArg}${skipArg}${takeArg}`, NXApi.url),
         )
             .then((res) => res.map((rel) => ({
                 ...rel,

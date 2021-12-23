@@ -30,9 +30,24 @@ describe('GitVersions', () => {
                 ]));
         });
 
-        test('should require all arguments', async () => {
+        test('should require all arguments to be valid', async () => {
             await expect(GitVersions.getReleases('', ''))
                 .rejects.toThrow('Missing argument');
+
+            await expect(GitVersions.getReleases('flybywiresim', 'a32nx', false, -1, -1))
+                .rejects.toThrow('skip or take cannot be negative');
+        });
+
+        test("should respect take", async () => {
+            await expect(GitVersions.getReleases("flybywiresim", "a32nx", false, 0, 5))
+                .resolves.toHaveLength(5);
+        });
+
+        test("should respect skip", async () => {
+            const firstOnes = await GitVersions.getReleases("flybywiresim", "a32nx", false, 0, 5);
+
+            await expect(GitVersions.getReleases("flybywiresim", "a32nx", false, 5, 5).then((releases) => releases[0]))
+                .resolves.not.toEqual(expect.objectContaining({ name: firstOnes[0].name }));
         });
     });
 
