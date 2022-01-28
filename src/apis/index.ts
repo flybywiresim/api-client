@@ -7,3 +7,4 @@ export * from './gnss';
 export * from './metar';
 export * from './taf';
 export * from './telex';
+export * from './Hoppie';
