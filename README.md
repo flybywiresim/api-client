@@ -367,6 +367,25 @@ GNSS.get()
 });
 ```
 
+### Hoppie
+
+#### Send the request
+```ts
+import { Hoppie } from '@flybywiresim/api-client';
+
+const body {
+  logon: 'XXXXXXXXX',
+  from: 'TEST0',
+  to: 'TEST0',
+  type: 'poll'
+}
+Hoppie.post(body)
+  .then(data => {
+    console.log(data);
+  }).catch(err => {
+    console.error(err);
+});
+```
 
 
 ## License
