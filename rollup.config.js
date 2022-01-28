@@ -19,10 +19,12 @@ export default {
       file: packageJson.module,
       format: "esm",
       sourcemap: true
-    }
+    },
   ],
   plugins: [
-    resolve(),
+    resolve({
+      browser: true
+    }),
     json(),
     commonjs(),
     typescript({
