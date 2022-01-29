@@ -28,6 +28,9 @@
   ],
   "author": "FlyByWire Simulations",
   "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.4"
+  },
   "devDependencies": {
     "@flybywiresim/eslint-config": "^0.2.2",
     "@rollup/plugin-commonjs": "^20.0.0",
@@ -36,7 +39,6 @@
     "@types/es6-promise": "^3.3.0",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/parser": "^4.31.2",
-    "axios": "^0.21.4",
     "eslint": "^7.32.0",
     "eslint-plugin-jest": "^24.4.2",
     "rollup": "^2.57.0",
