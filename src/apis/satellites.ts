@@ -2,7 +2,7 @@ import { NXApi } from '../index';
 import { get } from '../utils';
 
 export enum SatelliteType {
-    GNSS = 'gnss',
+    GPS = 'gnss',
     Iridium = 'iridium',
     IridiumNEXT = 'iridium-NEXT',
     Starlink = 'starlink',
