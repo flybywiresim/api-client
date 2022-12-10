@@ -1,6 +1,17 @@
 import { NXApi } from '../index';
 import { get } from '../utils';
 
+export enum SatelliteType {
+    GNSS = 'gnss',
+    Iridium = 'iridium',
+    IridiumNEXT = 'iridium-NEXT',
+    Starlink = 'starlink',
+    Galileo = 'galileo',
+    GLONASS = 'glo-ops',
+    Beidou = 'beidou',
+    Intelsat = 'intelsat',
+}
+
 export declare class SatelliteResponse {
     name: string;
 
@@ -42,8 +53,8 @@ export declare class SatelliteResponse {
 }
 
 export class Satellites {
-    public static get(): Promise<SatelliteResponse[]> {
-        const url = new URL('/api/v1/satellites', NXApi.url);
+    public static get(type: SatelliteType): Promise<SatelliteResponse[]> {
+        const url = new URL(`/api/v1/satellites?type=${type}`, NXApi.url);
 
         return get<SatelliteResponse[]>(url)
             .then((res) => res.map(Satellites.mapResult));
