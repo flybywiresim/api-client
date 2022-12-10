@@ -1,7 +1,7 @@
 import { NXApi } from '../index';
 import { get } from '../utils';
 
-export declare class GNSSResponse {
+export declare class SatelliteResponse {
     name: string;
 
     id: string;
@@ -35,17 +35,21 @@ export declare class GNSSResponse {
     meanMotionDot: number;
 
     meanMotionDdot: number;
+
+    tleLineOne: string;
+
+    tleLineTwo: string;
 }
 
-export class GNSS {
-    public static get(): Promise<GNSSResponse[]> {
-        const url = new URL('/api/v1/gnss', NXApi.url);
+export class Satellites {
+    public static get(): Promise<SatelliteResponse[]> {
+        const url = new URL('/api/v1/satellites', NXApi.url);
 
-        return get<GNSSResponse[]>(url)
-            .then((res) => res.map(GNSS.mapResult));
+        return get<SatelliteResponse[]>(url)
+            .then((res) => res.map(Satellites.mapResult));
     }
 
-    private static mapResult(response: GNSSResponse): GNSSResponse {
+    private static mapResult(response: SatelliteResponse): SatelliteResponse {
         return {
             ...response,
             epoch: new Date(response.epoch),

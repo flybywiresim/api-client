@@ -3,7 +3,7 @@ export * from './atc';
 export * from './atis';
 export * from './charts';
 export * from './git-versions';
-export * from './gnss';
+export * from './satellites';
 export * from './metar';
 export * from './taf';
 export * from './telex';

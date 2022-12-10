@@ -1,4 +1,4 @@
-import { GNSS } from './gnss';
+import { GNSS } from './satellites';
 
 describe('GNSS', () => {
     test('should return a GNSS response array', async () => {
