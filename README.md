@@ -40,6 +40,7 @@ Metar.get(icao, source)
   - ms
   - ivao
   - pilotedge
+  - aviationweather
 
 ### TAF
 ```ts
