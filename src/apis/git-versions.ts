@@ -12,6 +12,8 @@ export declare class CommitInfo {
 export declare class ReleaseInfo {
     name: string;
 
+    isPreRelease: boolean;
+
     publishedAt: Date;
 
     htmlUrl: string;
